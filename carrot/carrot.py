@@ -36,7 +36,7 @@ class Carrot(object):
         ret = Carrot.UNDETERMINED
         conn = self.getHttpCon()
         conn.connect()
-        conn.request("GET", "/games/" + self.appId + "/users/" + userId + ".json")
+        conn.request("GET", "/games/" + self.appId + "/users.json?id=" + urllib.quote_plus(userId))
         response = conn.getresponse()
         if response.status == 200:
             ret = Carrot.AUTHORIZED
