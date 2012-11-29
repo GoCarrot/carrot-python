@@ -61,7 +61,7 @@ class Carrot(object):
             ret = Carrot.AUTHORIZED
         elif response.status == 401:
             ret = Carrot.READ_ONLY
-        elif response.status == 404:
+        elif response.status == 405:
             ret = Carrot.NOT_AUTHORIZED
         elif response.status == 422:
             ret = Carrot.NOT_CREATED
@@ -117,7 +117,7 @@ class Carrot(object):
             ret = Carrot.AUTHORIZED
         elif response.status == 401:
             ret = Carrot.READ_ONLY
-        elif response.status == 404:
+        elif response.status == 405:
             ret = Carrot.NOT_AUTHORIZED
         else:
             sys.stderr.write("Error posting signed request to Carrot (" + str(response.status) + "):" + response.read() + "\n")
