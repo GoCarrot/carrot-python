@@ -32,24 +32,7 @@ class Carrot(object):
         self.appSecret = appSecret
         self.hostname = hostname
 
-    def validateUser(self, userId):
-        ret = Carrot.UNDETERMINED
-        conn = self.getHttpCon()
-        conn.connect()
-        conn.request("GET", "/games/" + self.appId + "/users.json?id=" + urllib.quote_plus(userId))
-        response = conn.getresponse()
-        if response.status == 200:
-            ret = Carrot.AUTHORIZED
-        elif response.status == 401:
-            ret = Carrot.READ_ONLY
-        elif response.status == 404:
-            ret = Carrot.NOT_CREATED
-        else:
-            sys.stderr.write("Error validating Carrot user (" + str(response.status) + "): " + response.read() + "\n")
-        conn.close()
-        return ret
-
-    def createUser(self, userId, accessToken):
+    def validateUser(self, userId, accessToken):
         ret = Carrot.UNDETERMINED
         params = urllib.urlencode({'access_token': accessToken, 'api_key': userId})
         headers = {"Content-type": "application/x-www-form-urlencoded"}
@@ -66,7 +49,7 @@ class Carrot(object):
         elif response.status == 422:
             ret = Carrot.NOT_CREATED
         else:
-            sys.stderr.write("Error creating Carrot user (" + str(response.status) + "): " + response.read() + "\n")
+            sys.stderr.write("Error validating Carrot user (" + str(response.status) + "): " + response.read() + "\n")
         conn.close()
         return ret
 
