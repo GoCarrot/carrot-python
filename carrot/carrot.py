@@ -76,6 +76,10 @@ class Carrot(object):
             query_params.update({'object_instance_id': objectInstanceId})
         return self.postSignedRequest(userId, endpoint, query_params)
 
+    def postLike(self, userId, like_object):
+        endpoint = "/me/like.json"
+        return self.postSignedRequest(userId, endpoint, {'object':like_object})
+
     def postSignedRequest(self, userId, endpoint, query_params):
         ret = Carrot.UNDETERMINED
         url_params = {
