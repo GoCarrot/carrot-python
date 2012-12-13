@@ -81,6 +81,12 @@ class Carrot(object):
         return self.postSignedRequest(userId, endpoint, {'object':like_object})
 
     def postSignedRequest(self, userId, endpoint, query_params):
+        return self.makeSignedRequest("POST", userId, endpoint, query_params)
+
+    def getSignedRequest(self, userId, endpoint, query_params):
+        return self.makeSignedRequest("GET", userId, endpoint, query_params)
+
+    def makeSignedRequest(self, method, userId, endpoint, query_params):
         ret = Carrot.UNDETERMINED
         url_params = {
             'api_key': userId,
@@ -91,14 +97,14 @@ class Carrot(object):
         url_params.update(query_params)
         sorted_kv = sorted(url_params.items(), key=lambda x: x[0])
         url_string = '&'.join('='.join(kv) for kv in sorted_kv)
-        sign_string = "POST\n" + self.hostname.partition(":")[0] + "\n" + endpoint + "\n" + url_string
+        sign_string = method + "\n" + self.hostname.partition(":")[0] + "\n" + endpoint + "\n" + url_string
         dig = hmac.new(key = self.appSecret, msg = sign_string, digestmod = hashlib.sha256).digest()
 
         url_string = '&'.join('='.join([kv[0], urllib.quote_plus(kv[1])]) for kv in sorted_kv) + "&sig=" + urllib.quote_plus(base64.encodestring(dig).strip())
         headers = {"Content-type": "application/x-www-form-urlencoded"}
         conn = self.getHttpCon()
         conn.connect()
-        conn.request("POST", endpoint, url_string, headers)
+        conn.request(method, endpoint, url_string, headers)
         response = conn.getresponse()
         if response.status == 201 or response.status == 200:
             ret = Carrot.AUTHORIZED
@@ -109,4 +115,7 @@ class Carrot(object):
         else:
             sys.stderr.write("Error posting signed request to Carrot (" + str(response.status) + "):" + response.read() + "\n")
         conn.close()
-        return ret
+        if method == "GET" and ret == Carrot.AUTHORIZED:
+            return response.read()
+        else:
+            return ret
