@@ -62,12 +62,9 @@ class Carrot(object):
         endpoint = "/me/achievements.json"
         return json.loads(self.getSignedRequest(userId, endpoint, {}))['data']
 
-    def postHighScore(self, userId, score, leaderboardId=None):
+    def postHighScore(self, userId, score):
         endpoint = "/me/scores.json"
-        query_params = {'value': score}
-        if leaderboardId != None:
-            query_params.update({'leaderboard_id' : leaderboardId})
-        return self.postSignedRequest(userId, endpoint, query_params)
+        return self.postSignedRequest(userId, endpoint, {'value': score})
 
     def getScores(self, userId):
         endpoint = "/me/scores.json"
