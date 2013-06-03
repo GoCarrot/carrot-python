@@ -77,6 +77,17 @@ class Carrot(object):
         endpoint = "/me/like.json"
         return self.postSignedRequest(userId, endpoint, {'object':like_object})
 
+    def getTweet(self, userId, actionId, objectInstanceId, actionProperties = {}, objectProperties = {}):
+        endpoint = "/me/tweet.json"
+        query_params = {
+            'action_id': actionId,
+            'action_properties': json.dumps(actionProperties, separators=(',',':')),
+            'object_properties': json.dumps(objectProperties, separators=(',',':'))
+        }
+        if objectInstanceId != None:
+            query_params.update({'object_instance_id': objectInstanceId})
+        return self.getSignedRequest(userId, endpoint, query_params)
+
     def postSignedRequest(self, userId, endpoint, query_params):
         return self.makeSignedRequest("POST", userId, endpoint, query_params)
 
